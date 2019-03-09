@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    {% if title %}
-        <title> Flask Blog - {{ title}} </title>
-    {% else %}
-        <title> Flask Blog </title>
-    {% endif %}
-    
-</head>
-<body>
+{% extends "layout.html" %} <!-- Use layout.html template -->
+<!-- Code below will be used to overwrite 'content' block in home.html or in about.html file -->
+{% block content %}
     <h1> About PAGE PK</h1>
-</body>
-</html>
+{% endblock content %}
+

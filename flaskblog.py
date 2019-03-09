@@ -1,4 +1,4 @@
-from flask import Flask, render_template #importing Flask class
+from flask import Flask, render_template, url_for #importing Flask class
 
 
 app = Flask(__name__) #Start Flask. Instatation of our Flask in 'app' variable. __name__ is the name of the module. If we run flaskblog.py directly then __name__ will be equal to __main__
@@ -41,6 +41,7 @@ def about():
 # __name__ == '__main__' if we are running this script directly from python script, otherwise is not true
 if( __name__ == '__main__'):
     app.run(debug=True)
+
 
 
 
