@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+
+
+    
+        <title> Flask Blog - Register </title>
+    
+    
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4" href="/">Flask Blog</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link" href="/home">Home</a>
+              <a class="nav-item nav-link" href="/about">About</a>
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" href="/login">Login</a>
+              <a class="nav-item nav-link" href="/register">Register</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+           <!-- Updating layout template to show our flash messages on any page. This line need to be here because we want to display our flash messages on the top of our content-->
+              
+          
+          
+    <!-- Put form in our content section  -->
+    <div class="content-section"> <!-- This div will use class 'content-section' that is in main.css file (in order to look nicer)
+        <form method="POST" action=""> <!-- method of this form will be POST and action of this form will be empty string -->
+            <input id="csrf_token" name="csrf_token" type="hidden" value="ImI4YmMyYTczMzk4YzVmNWQ1YTZlMzVmNjM3OWRhOTMxZTc5ODE2OGMi.XIZPyQ.iFBydz0IAZFD_bxRrhxlD012qEQ"> <!-- Form field here. If you accessing variables in our template then you need to use double curly braces. 'form' instance is passed to our template. form.hidden_tag() is adding CSR token  for security  -->
+            <fieldset class="form-group"> <!-- This is a bootstrap stuff -->
+                <legend class="border-bottom mb-4">Join Today</legend> <!-- This is a legend for our registration form. mb-4 is a margin bottom of value 4 -->
+                <div class="form-group"> <!-- Create form groups. Here we will use fields from the form that we have pasted in -->
+                    <label class="form-control-label" for="username">Username</label> <!-- This will print label for our username field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+                    <input class="form-control form-control-lg" id="username" name="username" required type="text" value=""> <!-- This will print our username field (this filed is declared in our class RegistrationForm() ). This print will use two classes form-control and form-control-lg (lg is for large)-->
+                </div>
+                <div class="form-group"> <!-- Next form-group (like above but for email) -->
+                    <label class="form-control-label" for="email">Email</label> <!-- This will print label for our email field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+                    <input class="form-control form-control-lg" id="email" name="email" required type="text" value=""> <!-- This will print our email field (this filed is declared in our class RegistrationForm() ). This print will use two classes form-control and form-control-lg (lg is for large)-->
+                </div>
+                <div class="form-group"> <!-- Next form-group (like above but for password) -->
+                    <label class="form-control-label" for="password">Password</label> <!-- This will print label for our password field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+                    <input class="form-control form-control-lg" id="password" name="password" required type="password" value=""> <!-- This will print our password field (this filed is declared in our class RegistrationForm() ). This print will use two classes form-control and form-control-lg (lg is for large)-->
+                </div>
+                <div class="form-group"> <!-- Next form-group (like above but for confirm_password) -->
+                    <label class="form-control-label" for="confirm_password">Confirm Password</label> <!-- This will print label for our confirm_password field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+                    <input class="form-control form-control-lg" id="confirm_password" name="confirm_password" required type="password" value=""> <!-- This will print our confirm_password field (this filed is declared in our class RegistrationForm() ). This print will use two classes form-control and form-control-lg (lg is for large)-->
+                </div>
+            </fieldset>
+            <div class="form-group"> <!-- Create another one div field for 'submit' button -->
+                <input class="btn btn-outline-info" id="submit" name="submit" type="submit" value="Sign Up"> <!-- Put submit button (btn) class and bootstrap class btn-outline-info that have nice blueish color -->
+            </div>
+        </form>
+    </div>
+    
+    <!-- On registration page usually there is question "Do you have account?" or "If you dont have account then 'Sign In' " Put div that will be for this purpose  -->
+    <div class="border-top pt-3"> <!-- pt-3 -> padding of top of 3 -->
+        <small class="text-muted"> <!-- For small text -->
+            Alredy Have An Account? <a class="ml-2" href="/login">Sign In</a>          <!-- Put link to login page with anchor tag -->
+        </small>
+    </div>
+
+        </div>
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3>Our Sidebar</h3>
+            <p class='text-muted'>You can put any information here you'd like.
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Latest Posts</li>
+                <li class="list-group-item list-group-item-light">Announcements</li>
+                <li class="list-group-item list-group-item-light">Calendars</li>
+                <li class="list-group-item list-group-item-light">etc</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+</html>
