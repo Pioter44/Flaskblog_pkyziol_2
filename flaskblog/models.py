@@ -1,10 +1,17 @@
 from datetime import datetime
-from flaskblog import db # import db because class User and Post are using it
+from flaskblog import db, login_manager # import db because class User and Post are using it
+from flask_login import UserMixin
 
 #For SQLAlchemy DB we can have represent database structure as a classes. Those classes will be a modules
 #Each class will be an own table in database 
 #User class to hold users (inheriting from db.Model)
-class User(db.Model):
+
+#Create function with decorator. This is for reloading user with user_id
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True) #user ID is an integer and this will be our pirimary_key
     username = db.Column(db.String(20), unique=True, nullable=False) #we assumed that username will be max 20 character long. username must be unique and cannot have value NULL
     email = db.Column(db.String(120), unique=True, nullable=False) #we assumed that email will be max 120 character long. email must be unique and cannot have value NULL

@@ -1,0 +1,6 @@
+{% extends "layout.html" %} <!-- Use layout.html template -->
+<!-- Code below will be used to overwrite 'content' block in home.html or in about.html file -->
+{% block content %}
+    <h1> {{ current_user.username }}</h1>
+{% endblock content %}
+

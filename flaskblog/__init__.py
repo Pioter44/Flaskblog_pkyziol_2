@@ -1,5 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager   #Import flask-login extension
 
 
 app = Flask(__name__) #Start Flask. Instatation of our Flask in 'app' variable. __name__ is the name of the module. If we run flaskblog.py directly then __name__ will be equal to __main__
@@ -13,6 +15,10 @@ app.config['SECRET_KEY'] = '4e21f3a3cafa9ba6913d728def0db6f7'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' #site.db should be created alongsite our other files in our current working directory
 
 db = SQLAlchemy(app) #instance of our SQLAlchemy database (app is an argument for that)
+bcrypt = Bcrypt(app) #Initialize bcrypt for encrypting user password
+login_manager = LoginManager(app)  #Create instance of LoginManager. It will hold on all user sessions in background for us
+login_manager.login_view = 'login' #Set the login route. 'login' is a function name of the route
+login_manager.login_message_category = 'info' #Adding nice flash message 
 
 #Lets do import of routes here (after app initialization) to avoid circular importing 
 from flaskblog import routes
