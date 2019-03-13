@@ -1,4 +1,6 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed # for user profile picture. FileField is a type o field and FileAllowed is like validator (list of allowed extensions of image file)
+from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flaskblog.models import User
@@ -32,3 +34,24 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')  #Add to field to stay login for some time when page is closed in browser by using secure cookie. This will be boolen field
     submit = SubmitField('Login')
 
+    #This class will be for enabling for user the change (update) of username and mail
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    picture = FileField('Update Profice Picture', validators =[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Update')
+    
+    #Add our custom validation method for checking if username or email that user want to change is already in db
+    #For update of username and mail we want to run those validators only when new user name or new email is diffrent than currect user name or email 
+    def validate_username(self, username):
+        if(username.data!=current_user.username):
+            user= User.query.filter_by(username=username.data).first()
+            if(user):
+                raise ValidationError('That username is taken. Please choose a diffrent one')
+    
+    def validate_email(self, email):
+        if(email.data!=current_user.email):
+            user= User.query.filter_by(email=email.data).first()
+            if(user):
+                raise ValidationError('That email is taken. Please choose a diffrent one')
+            

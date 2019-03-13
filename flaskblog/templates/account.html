@@ -1,6 +1,63 @@
 {% extends "layout.html" %} <!-- Use layout.html template -->
 <!-- Code below will be used to overwrite 'content' block in home.html or in about.html file -->
 {% block content %}
-    <h1> {{ current_user.username }}</h1>
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src={{ image_file}}  <!-- here we have image for user image -->
+        <div class="media-body">
+          <h2 class="account-heading"> {{current_user.username}} </h2>  <!-- Header 2 with user name -->
+          <p class="text-secondary"> {{current_user.email}} </p>  <!-- Paragraph with user email-->
+        </div>
+      </div>
+
+      <!-- Put form in our content section  -->
+          <form method="POST" action="" enctype= "multipart/form-data"> <!-- method of this form will be POST and action of this form will be empty string. Add special type of encoding (enctype) form - this is for our form to pass our picture data properly-->
+              {{ form.hidden_tag() }} <!-- Form field here. If you accessing variables in our template then you need to use double curly braces. 'form' instance is passed to our template. form.hidden_tag() is adding CSR token  for security  -->
+              <fieldset class="form-group"> <!-- This is a bootstrap stuff -->
+                  <legend class="border-bottom mb-4">Account Info</legend> <!-- This is a legend for our registration form. mb-4 is a margin bottom of value 4 -->
+                  <div class="form-group"> <!-- Create form groups. Here we will use fields from the form that we have pasted in -->
+                      {{ form.username.label(class="form-control-label") }} <!-- This will print label for our username field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+
+                      {% if form.username.errors %} <!-- Meet this condition only when we will have errors -->
+                          {{ form.username(class = "form-control form-control-lg is-invalid") }}
+                              <div class="invalid-feedback">
+                                  {% for error in form.username.errors %}
+                                      <span>{{ error}}</span> <!-- Print out all of the errors that we have -->
+                                  {% endfor %}
+                              </div>
+                      {% else %}
+                          {{ form.username(class = "form-control form-control-lg") }} <!-- This is for case when there is no errors -->
+                      {% endif %}
+
+                  </div>
+                  <div class="form-group"> <!-- Next form-group (like above but for email) -->
+                      {{ form.email.label(class="form-control-label") }} <!-- This will print label for our email field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+                      {% if form.email.errors %} <!-- Meet this condition only when we will have errors -->
+                          {{ form.email(class = "form-control form-control-lg is-invalid") }}
+                              <div class="invalid-feedback">
+                                  {% for error in form.email.errors %}
+                                      <span>{{ error}}</span> <!-- Print out all of the errors that we have -->
+                                  {% endfor %}
+                              </div>
+                      {% else %}
+                          {{ form.email(class = "form-control form-control-lg") }} <!-- This is for case when there is no errors -->
+                      {% endif %}
+                  </div>
+                  <div class="form-group"> <!-- Next form-group (like above but for picture) -->
+                      {{ form.picture.label() }} 
+                      {{ form.picture(class="form-control-label") }} <!-- This a field itself. Using bootstrap class -->
+                      <!-- Use span to handle validators and errors -->
+                      {% if form.picture.errors %}
+                          {% for error in form.picture.errors %}
+                              <span class="text-danger">{{ error }}</span></br> <!-- Print out all of the errors that we have. text-danger class will print errors in red -->
+                          {% endfor %}
+                      {% endif %}
+                  </div>
+              </fieldset>
+              <div class="form-group"> <!-- Create another one div field for 'submit' button -->
+                  {{ form.submit(class= "btn btn-outline-info") }} <!-- Put submit button (btn) class and bootstrap class btn-outline-info that have nice blueish color -->
+              </div>
+          </form>
+    </div>
 {% endblock content %}
 
