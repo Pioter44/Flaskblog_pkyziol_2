@@ -7,7 +7,7 @@
         <form method="POST" action=""> <!-- method of this form will be POST and action of this form will be empty string -->
             {{ form.hidden_tag() }} <!-- Form field here. If you accessing variables in our template then you need to use double curly braces. 'form' instance is passed to our template. form.hidden_tag() is adding CSR token  for security  -->
             <fieldset class="form-group"> <!-- This is a bootstrap stuff -->
-                <legend class="border-bottom mb-4">Join Today</legend> <!-- This is a legend for our registration form. mb-4 is a margin bottom of value 4 -->
+                <legend class="border-bottom mb-4">Log in</legend> <!-- This is a legend for our registration form. mb-4 is a margin bottom of value 4 -->
                 <div class="form-group"> <!-- Next form-group (like above but for email) -->
                     {{ form.email.label(class="form-control-label") }} <!-- This will print label for our email field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
                     {% if form.email.errors %} <!-- Meet this condition only when we will have errors -->

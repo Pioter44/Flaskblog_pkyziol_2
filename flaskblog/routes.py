@@ -1,15 +1,16 @@
 import os
 import secrets #This lib will be used to change picture name to unique hashed string
 from PIL import Image #for resizing picture
-from flask import render_template, url_for, flash, redirect, request #importing Flask class
+from flask import render_template, url_for, flash, redirect, request, abort #importing Flask class
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm # Need to use package name here
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm # Importing forms from porms.py here
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required #will handle user log in action
 
 #Now almost all webpages have dynamic data (not static)
 # - dynammic data are: posts, pictures placed by users on website
 #Declaring data structure (list of dicts) that will be used to put dynamic data
+'''
 posts = [
     {
     'author' : 'Corey Schafer',
@@ -25,13 +26,14 @@ posts = [
     }
 
 ]
- 
+'''
  
 
 @app.route("/") #route decorator. This decoreator allows to add aditional subpages. Decorators allows to add aditional functionality to existing functions
 @app.route("/home")
 def home():
     #return "<h1>Hello WORLD Pkyziol Wolbrom PG 10!<h1>"
+    posts = Post.query.all() #create post variable that will have query for post
     #Passing 'post' dynamic data to html template
     return render_template('home.html', posts= posts)
 
@@ -129,5 +131,67 @@ def account():
     image_file = url_for('static', filename = 'profile_pics/' + current_user.image_file) # user images will be located in static/profile_pics folder 
     return render_template('account.html', title='Account', image_file= image_file, form = form) #pass form to our account.html template
     
+    
+#New subpage post/new
+@app.route("/post/new", methods=['GET','POST']) # Now we are allowing 'GET' and 'POST' request in this route
+@login_required #adding this decoretor - this means that we need to log in in order to access account route
+def new_post():
+    form = PostForm() #create instance of our PostForm
+    #Add condition if our form is valid during submission (this is for 'POST' request)
+    if (form.validate_on_submit()):
+        #get post from our form and save it to db
+        post = Post(title= form.title.data, content= form.content.data, author=current_user)
+        db.session.add(post) #Add post to db
+        db.session.commit() #Commit (save) post to db
+        flash('Your post have been created!', 'success') #Add flash message that will tell user that 
+        return redirect(url_for('home')) #Redirect now to home page
+    return render_template('create_post.html', title='New Post', form = form, legend = 'New Post') #
+    
+    
+    
+#New subpage: 	Create route that will takes us to page for specific post 
+#In database each post has an ID (ID is an integer)
+@app.route("/post/<int:post_id>") # 
+def post(post_id):
+    post = Post.query.get_or_404(post_id) # If we are getting something from database by ID then we neeed to use 'get' method. In this case we will use slightly diffrent method 'get_or_404' - if ID do not exist then return html code 404 (web page do not exist)
+    return render_template('post.html', title= post.title, post = post) #
+
+#Route for updating posts - user can update only own posts
+#This route will require login 
+@app.route("/post/<int:post_id>/update", methods=['GET','POST']) # 
+@login_required #adding this decoretor - this means that we need to log in in order to access account route
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id) 
+    #Only user who wrote this post can update/edit this post
+    if(post.author != current_user):
+        abort(403) # We are doing manual abort here. 403 html response is http for forrbiden route
+    form = PostForm() #create instance of our PostForm
+    #This if is for writing updated/edited post to db (if statment is checking if data are correct)
+    if (form.validate_on_submit()):
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit() #Commit (save) post to db. We dont need to do db.session.add because data are already in db and we are only doing data update
+        flash('Your post have been updated!', 'success') #Add flash message that will tell user that 
+        return redirect(url_for('post', post_id = post.id)) #Redirect now to home page
+    #If request.method == 'GET' then populate the forms with username and email
+    elif(request.method == 'GET'): 
+        form.title.data = post.title #for filling field with current post data
+        form.content.data = post.content #for filling field with current post data
+    #Now render template
+    return render_template('create_post.html', title='Update Post', form = form, legend = 'Update Post') #
+    
+    
+#This route will require login 
+@app.route("/post/<int:post_id>/delete", methods=['POST']) # Only 'POST' request here
+@login_required #adding this decoretor - this means that we need to log in in order to access account route
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id) 
+    #Only user who wrote this post can update/edit this post
+    if(post.author != current_user):
+        abort(403) # We are doing manual abort here. 403 html response is http for forrbiden route
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post have been deleted!', 'success') #Add flash message that will tell user that 
+    return redirect(url_for('home')) #Redirect now to home page
     
     

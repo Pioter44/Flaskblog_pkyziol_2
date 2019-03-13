@@ -3,12 +3,13 @@
 {% block content %}
     {% for post in posts %}  <!-- This is begining of code block for displaying posts in for loop-->
         <article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ url_for('static', filename = 'profile_pics/' + post.author.image_file) }}">   <!-- Display user image - this is on the top-->
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ post.author }}</a>
-              <small class="text-muted">{{ post.date_posted }}</small>
+              <a class="mr-2" href="#">{{ post.author.username }}</a> <!-- Display username-->
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small> <!-- Display date-->
             </div>
-            <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+            <h2><a class="article-title" href="{{ url_for('post', post_id = post.id) }}">{{ post.title }}</a></h2> <!-- Link for post title-->
             <p class="article-content">{{ post.content }}</p>
           </div>
         </article>
