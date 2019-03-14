@@ -33,7 +33,10 @@ posts = [
 @app.route("/home")
 def home():
     #return "<h1>Hello WORLD Pkyziol Wolbrom PG 10!<h1>"
-    posts = Post.query.all() #create post variable that will have query for post
+    #posts = Post.query.all() #create post variable that will have query for all post
+    page = request.args.get('page', 1, type=int) # default page is page '1', type int is for 
+    #posts = Post.query.paginate(page=page, per_page=5) #create post variable that will use paginate
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5) #create post variable that will use paginate and order posts (latest first)
     #Passing 'post' dynamic data to html template
     return render_template('home.html', posts= posts)
 
@@ -193,5 +196,19 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post have been deleted!', 'success') #Add flash message that will tell user that 
     return redirect(url_for('home')) #Redirect now to home page
+    
+    
+    
+@app.route("/user/<string:username>")
+def user_posts(username):
+    page = request.args.get('page', 1, type=int) # default page is page '1', type int is for 
+    user = User.query.filter_by(username = username).first_or_404() #If you will get None then return code 404
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page=page, per_page=5) #create post variable that will use paginate and order posts (latest first)
+    #Passing 'post' dynamic data to html template
+    return render_template('user_posts.html', posts= posts, user=user)
+    
+    
     
     

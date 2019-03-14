@@ -1,6 +1,7 @@
 {% extends "layout.html" %} <!-- Use layout.html template -->
 <!-- Code below will be used to overwrite 'content' block in home.html or in about.html file -->
 {% block content %}
+    <h1 class="mb-3"> Posts by {{ user.username }} ( {{ posts.total }} ) </h1> <!-- Display username-->
     {% for post in posts.items %}  <!-- This is begining of code block for displaying posts in for loop. .items is for pagination -->
         <article class="media content-section">
           <img class="rounded-circle article-img" src="{{ url_for('static', filename = 'profile_pics/' + post.author.image_file) }}">   <!-- Display user image - this is on the top-->
@@ -18,9 +19,9 @@
         {% if page_num %} <!-- this if is because sometimes page_num can have value None. Usually is a num value -->
             {% if posts.page == page_num %} <!-- This if is for displying currect page with diffrent colour/style-->
                 <!-- We want to put page link number here (peg_num is diffrent than None)-->
-                <a class = "btn btn-info mb-4" href="{{ url_for('home', page = page_num)}}">{{ page_num}}</a><!-- anchor tag -->
+                <a class = "btn btn-info mb-4" href="{{ url_for('user_posts', username=user.username, page = page_num)}}">{{ page_num}}</a><!-- anchor tag -->
             {% else %}
-                <a class = "btn btn-outline-info mb-4" href="{{ url_for('home', page = page_num)}}">{{ page_num}}</a><!-- anchor tag -->
+                <a class = "btn btn-outline-info mb-4" href="{{ url_for('user_posts', username=user.username, page = page_num)}}">{{ page_num}}</a><!-- anchor tag -->
             {% endif %}
         {% else %}
            <!-- page_num is None here. We will put elipsis here-->
