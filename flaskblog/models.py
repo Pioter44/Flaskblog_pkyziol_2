@@ -1,6 +1,7 @@
 from datetime import datetime
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer #It will help to handle expiration of tokens during request of password reseting
-from flaskblog import db, login_manager, app # import db because class User and Post are using it. app will be used by functions related to "user password reset"
+from flask import current_app
+from flaskblog import db, login_manager # import db because class User and Post are using it. app will be used by functions related to "user password reset"
 from flask_login import UserMixin
 
 #For SQLAlchemy DB we can have represent database structure as a classes. Those classes will be a modules
@@ -32,14 +33,14 @@ class User(db.Model, UserMixin):
     #{'user_id': 1}
     #>>>
     def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec) #use app SECRET_KEY (it is in __init__.py)
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec) #use app SECRET_KEY (it is in __init__.py)
         return s.dumps({'user_id': self.id}).decode('utf-8') #User will be an instance of this user (self.id). This 'return' return token that is created by dumps method that have payload of current user id
     
     
     #Method that will verify token. This method is taking as an input a token calculated by get_reset_token(self, expires_sec=1800)
     @staticmethod #Using decoretor here (staticmethod) because we want to tell that this method will not use 'self' as an argument
     def verify_reset_token(token):
-        s = Serializer(app.config['SECRET_KEY']) #Create selializer object again with this 'SECRET_KEY'. We dont need to pass expires_sec this time
+        s = Serializer(current_app.config['SECRET_KEY']) #Create selializer object again with this 'SECRET_KEY'. We dont need to pass expires_sec this time
         #Use try because token can be invalid (for example expired with time grater than 'expires_sec' time)
         try:
             user_id = s.loads(token)['user_id'] # Check if token is valid (token valid: {'user_id': 1}; token not valid: itsdangerous.exc.SignatureExpired: Signature expired)

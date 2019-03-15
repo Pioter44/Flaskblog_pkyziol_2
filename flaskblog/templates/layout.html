@@ -31,19 +31,19 @@
             <div class="navbar-nav mr-auto">
               <!-- <a class="nav-item nav-link" href="/">Home</a> <!-- #This is a direct link -->
               <!-- <a class="nav-item nav-link" href="/about">About</a>  -->
-              <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a> <!-- #Use link that will use url_for() function-->
-              <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
+              <a class="nav-item nav-link" href="{{ url_for('main.home') }}">Home</a> <!-- #Use link that will use url_for() function-->
+              <a class="nav-item nav-link" href="{{ url_for('main.about') }}">About</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               <!-- See logout link if user is login -->
               {% if current_user.is_authenticated %}
-                     <a class="nav-item nav-link" href="{{ url_for('new_post') }}">New post</a> <!-- Add link to this post link route in navigation section so the user get get to this route easly -->
-                     <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
-                     <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                     <a class="nav-item nav-link" href="{{ url_for('posts.new_post') }}">New post</a> <!-- Add link to this post link route in navigation section so the user get get to this route easly -->
+                     <a class="nav-item nav-link" href="{{ url_for('users.account') }}">Account</a>
+                     <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
               {% else %}
-                  <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
-                  <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
+                  <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login</a>
+                  <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register</a>
               {% endif %}
 
             </div>

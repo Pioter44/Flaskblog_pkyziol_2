@@ -75,7 +75,7 @@
     <!-- On registration page usually there is question "Do you have account?" or "If you dont have account then 'Sign In' " Put div that will be for this purpose  -->
     <div class="border-top pt-3"> <!-- pt-3 -> padding of top of 3 -->
         <small class="text-muted"> <!-- For small text -->
-            Alredy Have An Account? <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>          <!-- Put link to login page with anchor tag -->
+            Alredy Have An Account? <a class="ml-2" href="{{ url_for('users.login') }}">Sign In</a>          <!-- Put link to login page with anchor tag -->
         </small>
     </div>
 {% endblock content %}
