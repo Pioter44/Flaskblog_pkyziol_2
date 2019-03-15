@@ -1,0 +1,10 @@
+{% extends "layout.html" %} <!-- Use layout.html template -->
+<!-- Code below will be used to overwrite 'content' block in home.html or in about.html file -->
+<!--  -->
+{% block content %}
+    <!-- Put form in our content section  -->
+    <div class="content-section"> <!-- This div will use class 'content-section' that is in main.css file (in order to look nicer)   -->
+        <h1>Ooops. Page Not Found (404)</h1> <!-- Print out all of the errors that we have -->
+        <p>That page does not exist. Please try a different location</p> <!-- Print out all of the errors that we have -->
+    </div>
+{% endblock content %}
