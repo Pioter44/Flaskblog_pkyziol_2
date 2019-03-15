@@ -1,0 +1,44 @@
+{% extends "layout.html" %} <!-- Use layout.html template -->
+<!-- Code below will be used to overwrite 'content' block in home.html or in about.html file -->
+<!--  -->
+{% block content %}
+    <!-- Put form in our content section  -->
+    <div class="content-section"> <!-- This div will use class 'content-section' that is in main.css file (in order to look nicer)   -->
+        <form method="POST" action=""> <!-- method of this form will be POST and action of this form will be empty string -->
+            {{ form.hidden_tag() }} <!-- Form field here. If you accessing variables in our template then you need to use double curly braces. 'form' instance is passed to our template. form.hidden_tag() is adding CSR token  for security  -->
+            <fieldset class="form-group"> <!-- This is a bootstrap stuff -->
+                <legend class="border-bottom mb-4">Reset Passowrd</legend> <!-- This is a legend for our registration form. mb-4 is a margin bottom of value 4 -->
+                <div class="form-group"> <!-- Next form-group (like above but for password) -->
+                    {{ form.password.label(class="form-control-label") }} <!-- This will print label for our password field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+                    {% if form.password.errors %} <!-- Meet this condition only when we will have errors -->
+                        {{ form.password(class = "form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    <span>{{ error}}</span> <!-- Print out all of the errors that we have -->
+                                {% endfor %}
+                            </div>
+                    {% else %}
+                        {{ form.password(class = "form-control form-control-lg") }} <!-- This is for case when there is no errors -->
+                    {% endif %}
+                </div>
+                <div class="form-group"> <!-- Next form-group (like above but for confirm_password) -->
+                    {{ form.confirm_password.label(class="form-control-label") }} <!-- This will print label for our confirm_password field. And we will give class here to print it (this is a bootstrap class to look it nicer) -->
+                    {% if form.confirm_password.errors %} <!-- Meet this condition only when we will have errors -->
+                        {{ form.confirm_password(class = "form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.confirm_password.errors %}
+                                    <span>{{ error}}</span> <!-- Print out all of the errors that we have -->
+                                {% endfor %}
+                            </div>
+                    {% else %}
+                        {{ form.confirm_password(class = "form-control form-control-lg") }} <!-- This is for case when there is no errors -->
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group"> <!-- Create another one div field for 'submit' button -->
+                {{ form.submit(class= "btn btn-outline-info") }} <!-- Put submit button (btn) class and bootstrap class btn-outline-info that have nice blueish color -->
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+

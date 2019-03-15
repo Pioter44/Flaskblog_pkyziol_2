@@ -2,10 +2,11 @@ import os
 import secrets #This lib will be used to change picture name to unique hashed string
 from PIL import Image #for resizing picture
 from flask import render_template, url_for, flash, redirect, request, abort #importing Flask class
-from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm # Importing forms from porms.py here
+from flaskblog import app, db, bcrypt, mail
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, RequestResetForm, ResetPasswordForm # Importing forms from porms.py here
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required #will handle user log in action
+from flask_mail import Message
 
 #Now almost all webpages have dynamic data (not static)
 # - dynammic data are: posts, pictures placed by users on website
@@ -209,6 +210,69 @@ def user_posts(username):
     #Passing 'post' dynamic data to html template
     return render_template('user_posts.html', posts= posts, user=user)
     
+#Method that will handle sending email to a user
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request', sender='noreply@demo.com', recipients = [user.email])
+    msg.body = f''' To reset your password, visit the following link:
+{url_for('reset_token', token = token, _external=True)}
+
+If you did not make this request then simply ignore this email and no change will be done.
+    '''
+    #Send mail
+    mail.send(msg)
+    
+#New subpage/route where user will request to reset passowrd
+#New subpage/route where user enter email address where rest password information should be sent. URL for this website will be "/reset_password"
+@app.route("/reset_password", methods=['GET','POST']) # Now we are allowing 'GET' and 'POST' request in this route
+def reset_request():
+    #This if is to make sure that user is "LOG OUT" before reseting their password
+    if current_user.is_authenticated:
+        return redirect(url_for('home')) #if user is "LOG IN" then redirect to home page (only user that is not "LOG IN" can reset password)
+    
+    form = RequestResetForm() #create instance of our RequestResetForm
+    #After we created our form we need to validate if the submited form was correct
+    if(form.validate_on_submit()):
+        #At that point user submited email in the form so lets check if we have user for such email in db
+        user = User.query.filter_by(email = form.email.data).first() # .first() means that we need first user with that email
+        #Now we are going to send email to that user with a token that they can use to reset their password
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password', 'info') #Add flash message that will tell user that 
+        #Now redirect user to 'login' webpage
+        return redirect(url_for('login')) 
+        
+    return render_template('reset_request.html', title= 'Reset Password', form=form) #render the template
+    
+    
+    
+#New subpage/route where user will acctually reset/change the password. 
+#We need to make sure that token that we gave to user in email is valid.
+#By sending user an email with a link containg this token we will know that it's them when they navigate to this route
+#URL for this website will be "/reset_password/<token>". Accept token as a parameter
+@app.route("/reset_password/<token>", methods=['GET','POST']) # Now we are allowing 'GET' and 'POST' request in this route
+def reset_token(token):
+    #This if is to make sure that user is "LOG OUT" before reseting their password
+    if current_user.is_authenticated:
+        return redirect(url_for('home')) #if user is "LOG IN" then redirect to home page (only user that is not "LOG IN" can reset password)
+    
+    user = User.verify_reset_token(token) #Validate if the token is valid by using method 'verify_reset_token' from User class. Here we are passing token from URL
+    if(user is None):
+        #Here 'token' is not valid and we are going to return 'reset_request.html'
+        flash('That is an invalid or expired token', 'warning') #Add flash message that will tell user that 
+        return render_template('reset_request.html') #render the template
+    
+    #Here 'token' is valid and we are going to return 'reset_token.html'
+    form = ResetPasswordForm() #create instance of our RequestResetForm
+    
+    #Putting some checkers to check if values that we have put are correct (valid) or not
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8') #hash user password
+        user.password = hashed_password
+        db.session.commit() #Commit changes to db
+        flash(f'Your password has been updated. You are now able to log in!', 'success')#Sending flash message (flash message is for one time warning message). Flash() function accept two arguments
+        return redirect(url_for('login')) #If successful then redirect user to home page
+    
+    return render_template('reset_token.html', title= 'Reset Password', form=form) #render the template
     
     
     

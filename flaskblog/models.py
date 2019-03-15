@@ -1,5 +1,6 @@
 from datetime import datetime
-from flaskblog import db, login_manager # import db because class User and Post are using it
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer #It will help to handle expiration of tokens during request of password reseting
+from flaskblog import db, login_manager, app # import db because class User and Post are using it. app will be used by functions related to "user password reset"
 from flask_login import UserMixin
 
 #For SQLAlchemy DB we can have represent database structure as a classes. Those classes will be a modules
@@ -19,6 +20,36 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     #Post model and User model have relationship since user is an author for a posts (one to many relationship because one user can have multiple posts but posts can have only one author)
     posts = db.relationship('Post', backref='author', lazy=True)
+    
+    #This method will help to create tokens that will be helpful during request of password reseting by user 
+    #Example from console:
+    #>>>
+    #>>> s= Serializer('secret1',60)
+    #>>> token = s.dumps({'user_id': 1}).decode('utf-8') # This is a payload: {'user_id': 1}
+    #>>> token
+    #'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU1MjU1OTI4MSwiZXhwIjoxNTUyNTU5MzQxfQ.eyJ1c2VyX2lkIjoxfQ.b8kf8Z_94td1WqvrRaA60yJV9814-L98jEYtMPL-q_R7jpZPzmDd_Q6fULQM44k-bhl-8wMDaiQdw_TBsXS5GQ'
+    #>>> s.loads(token)
+    #{'user_id': 1}
+    #>>>
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec) #use app SECRET_KEY (it is in __init__.py)
+        return s.dumps({'user_id': self.id}).decode('utf-8') #User will be an instance of this user (self.id). This 'return' return token that is created by dumps method that have payload of current user id
+    
+    
+    #Method that will verify token. This method is taking as an input a token calculated by get_reset_token(self, expires_sec=1800)
+    @staticmethod #Using decoretor here (staticmethod) because we want to tell that this method will not use 'self' as an argument
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY']) #Create selializer object again with this 'SECRET_KEY'. We dont need to pass expires_sec this time
+        #Use try because token can be invalid (for example expired with time grater than 'expires_sec' time)
+        try:
+            user_id = s.loads(token)['user_id'] # Check if token is valid (token valid: {'user_id': 1}; token not valid: itsdangerous.exc.SignatureExpired: Signature expired)
+        except:
+            return None
+        return User.query.get(user_id) #Return User with that ID
+        
+    
+    
+    
     
     #Special Doonder method for printing out User
     def __repr__(self):
